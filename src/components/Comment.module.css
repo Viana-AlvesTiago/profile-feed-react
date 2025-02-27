@@ -49,10 +49,17 @@
     cursor: pointer;
     line-height: 0;
     border-radius: 4px;
+    display: none;
 }
 
 .commentContent header button:hover{
     color: var(--red-500);
+}
+
+.commentContent:hover{
+    header button {
+        display: block;
+    }
 }
 
 .commentContent p {
@@ -72,6 +79,7 @@
     display: flex;
     align-items: center;
     border-radius: 2px;
+    
 }
 
 .commentBox footer button:hover{
