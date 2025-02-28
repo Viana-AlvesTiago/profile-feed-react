@@ -2,26 +2,36 @@ import styles from './Post.module.css'
 import { Comment } from './Comment'
 import { Avatar } from './Avatar'
 
-export function Post(){
+export function Post({ author, publishedAt, content }){
+
+    const publisedDateFormatted = new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit',
+    }).format(publishedAt)
+
     return(
         <article className={styles.post}>
             <header>
                 <div className={styles.author}>
-                    <Avatar  />  
+                    <Avatar src={author.avatarUrl}  />  
                     <div className={styles.authorInfo}>
-                        <strong>Tiago Alves</strong>
-                        <span>Web Developer</span>
+                        <strong>{author.name}</strong>
+                        <span>{author.role}</span>
                     </div>
                 </div>
 
-                <time title='25 de Fevereiro ás 08:13' dateTime='2025-02-25 08:13:00'>Publicado há 1h</time>
+                <time title={publisedDateFormatted} dateTime='2025-02-25 08:13:00'>{publisedDateFormatted}</time>
             </header>
             <div className={styles.content}>
-                <p>Fala galera</p>
-                <p>Acabei de subir mais um projeto no meu portif. É um porjeto que fiz no NLW Return, evendo</p>
-                <p><a href='#'>tiago.design/doctorcare</a></p>
-                <p><a href='#'>#novoprojeto</a>{' '}<a href='#'>#nlw</a></p>
-
+                {content.map(iten => {
+                    if (iten.type === 'paragraph'){
+                        return <p>{iten.content}</p>;
+                    }else if(iten.type === 'link'){
+                        return <p><a>{iten.content}</a></p>
+                    }
+                })}
             </div>
 
             <form className={styles.commentForm} >
