@@ -1,15 +1,53 @@
+/* eslint-disable react/prop-types */
+
 import styles from './Post.module.css'
 import { Comment } from './Comment'
 import { Avatar } from './Avatar'
+import { useState } from 'react'
+
+
+
 
 export function Post({ author, publishedAt, content }){
 
+    const [comments, setComments] = useState([]);
+    const [newCommentText, setNewCommentText] = useState(""); 
+ 
     const publisedDateFormatted = new Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: 'long',
         hour: '2-digit',
         minute: '2-digit',
     }).format(publishedAt)
+
+    function handleNewCommentChange(){
+        event.target.setCustomValidity('');
+        setNewCommentText(event.target.value);
+    }
+  
+
+
+    function hadleCreateNewComment(){
+        event.preventDefault();
+        setComments([...comments, newCommentText]);
+        setNewCommentText('');
+    }
+
+    function deleteComment(commentToDelete){
+
+        const commentsWithoutDeletedOne = comments.filter(comment => {
+            return comment !== commentToDelete;
+        })
+
+        setComments(commentsWithoutDeletedOne);
+        
+    }
+
+    function handleNewCommentInvalid(){
+        event.target.setCustomValidity('Este campo é obrigatório porra!');
+    }
+
+    const isNeCommentLength = newCommentText.length < 5
 
     return(
         <article className={styles.post}>
@@ -27,22 +65,40 @@ export function Post({ author, publishedAt, content }){
             <div className={styles.content}>
                 {content.map(iten => {
                     if (iten.type === 'paragraph'){
-                        return <p>{iten.content}</p>;
+                        return <p key={iten.content}>{iten.content}</p>;
                     }else if(iten.type === 'link'){
-                        return <p><a>{iten.content}</a></p>
+                        return <p key={iten.content}><a>{iten.content}</a></p>
                     }
                 })}
             </div>
 
-            <form className={styles.commentForm} >
+            <form onSubmit={hadleCreateNewComment} className={styles.commentForm} >
                 <strong>Deixe seu feedback</strong>
-                <textarea placeholder='Deixe um comentário' />
+                <textarea
+                     name='comment' 
+                     placeholder='Deixe um comentário' 
+                     value={newCommentText} 
+                     onChange={handleNewCommentChange}
+                     onInvalid={handleNewCommentInvalid}
+                     required
+                />
+               
+                { newCommentText &&
                 <footer>
-                <button type='submit'>Comentar</button>
+                <button type='submit' disabled={isNeCommentLength}>Comentar</button>
                 </footer>
+                }
             </form>
             <div className={styles.commentList}>
-                <Comment />
+                {comments.map(comment => {
+                    return (
+                        <Comment 
+                            key={comment} 
+                            content={comment} 
+                            onDeleteComment={deleteComment}
+                        />
+                    )
+                })}
             </div>
         </article>
     )
