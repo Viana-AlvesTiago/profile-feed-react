@@ -21,6 +21,7 @@ export function Post({ author, publishedAt, content }){
     }).format(publishedAt)
 
     function handleNewCommentChange(){
+        event.target.setCustomValidity('');
         setNewCommentText(event.target.value);
     }
   
@@ -41,6 +42,12 @@ export function Post({ author, publishedAt, content }){
         setComments(commentsWithoutDeletedOne);
         
     }
+
+    function handleNewCommentInvalid(){
+        event.target.setCustomValidity('Este campo é obrigatório porra!');
+    }
+
+    const isNeCommentLength = newCommentText.length < 5
 
     return(
         <article className={styles.post}>
@@ -67,10 +74,20 @@ export function Post({ author, publishedAt, content }){
 
             <form onSubmit={hadleCreateNewComment} className={styles.commentForm} >
                 <strong>Deixe seu feedback</strong>
-                <textarea name='comment' placeholder='Deixe um comentário' value={newCommentText} onChange={handleNewCommentChange} />
+                <textarea
+                     name='comment' 
+                     placeholder='Deixe um comentário' 
+                     value={newCommentText} 
+                     onChange={handleNewCommentChange}
+                     onInvalid={handleNewCommentInvalid}
+                     required
+                />
+               
+                { newCommentText &&
                 <footer>
-                <button type='submit'>Comentar</button>
+                <button type='submit' disabled={isNeCommentLength}>Comentar</button>
                 </footer>
+                }
             </form>
             <div className={styles.commentList}>
                 {comments.map(comment => {
